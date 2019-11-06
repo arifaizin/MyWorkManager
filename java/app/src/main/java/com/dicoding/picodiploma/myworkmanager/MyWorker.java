@@ -27,10 +27,7 @@ public class MyWorker extends Worker {
 
     private static final String TAG = MyWorker.class.getSimpleName();
     private final String APP_ID = "93a3696714297ee5a9f65486aa8cb824";
-
-
-    public static final String EXTRA_TITLE = "title";
-    public static final String EXTRA_CITY = "description";
+    public static final String EXTRA_CITY = "city";
     private Result resultStatus;
 
     public MyWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
@@ -78,9 +75,7 @@ public class MyWorker extends Worker {
                     resultStatus = Result.success();
 
                 } catch (Exception e) {
-                    String title = "Get Current Weather Not Success";
-                    String message = e.getMessage();
-                    showNotification(title, message);
+                    showNotification("Get Current Weather Not Success",e.getMessage());
                     Log.d(TAG, "onSuccess: Gagal.....");
                     resultStatus = Result.failure();
                 }
@@ -88,11 +83,8 @@ public class MyWorker extends Worker {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                showNotification("Get Current Weather Failed",error.getMessage());
                 Log.d(TAG, "onFailure: Gagal.....");
-                // ketika proses gagal, maka jobFinished diset dengan parameter true. Yang artinya job perlu di reschedule
-                String title = "Get Current Weather Failed";
-                String message = error.getMessage();
-                showNotification(title, message);
                 resultStatus = Result.failure();
 
             }
@@ -100,9 +92,9 @@ public class MyWorker extends Worker {
         return resultStatus;
     }
 
-    public static final int NOTIFICATION_ID = 1;
-    public static String CHANNEL_ID = "channel_01";
-    public static CharSequence CHANNEL_NAME = "dicoding channel";
+    private static final int NOTIFICATION_ID = 1;
+    private static final String CHANNEL_ID = "channel_01";
+    private static final String CHANNEL_NAME = "dicoding channel";
 
     private void showNotification(String title, String description) {
 

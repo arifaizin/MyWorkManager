@@ -91,6 +91,10 @@ public class MainActivity extends AppCompatActivity {
                     public void onChanged(WorkInfo workInfo) {
                         String status = workInfo.getState().name();
                         textStatus.append("\n"+status);
+                        btnCancelTask.setEnabled(false);
+                        if (workInfo.getState() == WorkInfo.State.ENQUEUED){
+                            btnCancelTask.setEnabled(true);
+                        }
                     }
                 });
             }
