@@ -11,7 +11,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Masukkan Nama Kota" />
+        android:text="@string/enter_city_name" />
 
     <EditText
         android:id="@+id/editCity"
@@ -25,7 +25,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="4dp"
-        android:text="Run One Time Task" />
+        android:text="@string/run_one_time_task" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -38,7 +38,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="4dp"
             android:layout_weight="1"
-            android:text="Run Periodic Task" />
+            android:text="@string/run_periodic_task" />
 
         <Button
             android:id="@+id/btnCancelTask"
@@ -47,13 +47,13 @@
             android:layout_margin="4dp"
             android:layout_weight="1"
             android:enabled="false"
-            android:text="Cancel Periodic Task" />
+            android:text="@string/cancel_periodic_task" />
     </LinearLayout>
 
     <TextView
         android:id="@+id/textStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Status :" />
+        android:text="@string/status" />
 
 </LinearLayout>

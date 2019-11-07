@@ -25,14 +25,14 @@ import static android.content.Context.NOTIFICATION_SERVICE;
 
 public class MyWorker extends Worker {
 
-    private static final String TAG = MyWorker.class.getSimpleName();
-    private final String APP_ID = "93a3696714297ee5a9f65486aa8cb824";
-    public static final String EXTRA_CITY = "city";
-    private Result resultStatus;
-
     public MyWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
     }
+
+    private static final String TAG = MyWorker.class.getSimpleName();
+    private static final String APP_ID = "93a3696714297ee5a9f65486aa8cb824";
+    public static final String EXTRA_CITY = "city";
+    private Result resultStatus;
 
     @NonNull
     @Override
@@ -94,7 +94,7 @@ public class MyWorker extends Worker {
 
     private static final int NOTIFICATION_ID = 1;
     private static final String CHANNEL_ID = "channel_01";
-    private static final String CHANNEL_NAME = "dicoding channel";
+    private static final String CHANNEL_NAME = "dicoding_channel";
 
     private void showNotification(String title, String description) {
 

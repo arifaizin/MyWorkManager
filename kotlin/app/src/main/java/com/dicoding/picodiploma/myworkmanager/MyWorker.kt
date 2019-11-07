@@ -21,14 +21,15 @@ class MyWorker(context: Context, workerParams: WorkerParameters) : Worker(contex
 
     companion object {
         private val TAG = MyWorker::class.java.simpleName
+        const val APP_ID = "93a3696714297ee5a9f65486aa8cb824"
         const val EXTRA_CITY = "city"
         const val NOTIFICATION_ID = 1
         const val CHANNEL_ID = "channel_01"
         const val CHANNEL_NAME = "dicoding channel"
     }
 
-    private val APP_ID = "93a3696714297ee5a9f65486aa8cb824"
     private var resultStatus: Result? = null
+
     override fun doWork(): Result {
         val dataCity = inputData.getString(EXTRA_CITY)
         val result = getCurrentWeather(dataCity)

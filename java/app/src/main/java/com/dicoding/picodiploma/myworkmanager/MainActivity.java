@@ -18,7 +18,7 @@ import android.widget.TextView;
 
 import java.util.concurrent.TimeUnit;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     Button btnOneTimeTask, btnPeriodicTask, btnCancelTask;
     EditText editCity;
@@ -35,78 +35,86 @@ public class MainActivity extends AppCompatActivity {
         textStatus = findViewById(R.id.textStatus);
         btnPeriodicTask = findViewById(R.id.btnPeriodicTask);
         btnCancelTask = findViewById(R.id.btnCancelTask);
-        btnOneTimeTask.setOnClickListener(new View.OnClickListener() {
+
+        btnOneTimeTask.setOnClickListener(this);
+        btnPeriodicTask.setOnClickListener(this);
+        btnCancelTask.setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View view) {
+       switch (view.getId()){
+           case R.id.btnOneTimeTask:
+               startOneTimeTask();
+               break;
+           case R.id.btnPeriodicTask:
+               startPeriodicTask();
+               break;
+           case R.id.btnCancelTask:
+               cancelPeriodicTask();
+               break;
+       }
+    }
+
+    private void startOneTimeTask() {
+        textStatus.setText(getString(R.string.status));
+
+        Data data = new Data.Builder()
+                .putString(MyWorker.EXTRA_CITY, editCity.getText().toString())
+                .build();
+
+        Constraints constraints = new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+
+        OneTimeWorkRequest oneTimeWorkRequest = new OneTimeWorkRequest.Builder(MyWorker.class)
+                .setInputData(data)
+                .setConstraints(constraints)
+                .build();
+
+        WorkManager.getInstance().enqueue(oneTimeWorkRequest);
+
+        WorkManager.getInstance().getWorkInfoByIdLiveData(oneTimeWorkRequest.getId()).observe(MainActivity.this, new Observer<WorkInfo>() {
             @Override
-            public void onClick(View view) {
-
-                textStatus.setText("Status :");
-
-                Data data = new Data.Builder()
-                        .putString(MyWorker.EXTRA_CITY, editCity.getText().toString())
-                        .build();
-
-                Constraints constraints = new Constraints.Builder()
-                        .setRequiredNetworkType(NetworkType.CONNECTED)
-                        .build();
-
-                OneTimeWorkRequest oneTimeWorkRequest = new OneTimeWorkRequest.Builder(MyWorker.class)
-                                .setInputData(data)
-                                .setConstraints(constraints)
-                                .build();
-
-                WorkManager.getInstance().enqueue(oneTimeWorkRequest);
-
-                WorkManager.getInstance().getWorkInfoByIdLiveData(oneTimeWorkRequest.getId()).observe(MainActivity.this, new Observer<WorkInfo>() {
-                    @Override
-                    public void onChanged(WorkInfo workInfo) {
-                        String status = workInfo.getState().name();
-                        textStatus.append("\n"+status);
-                    }
-                });
+            public void onChanged(WorkInfo workInfo) {
+                String status = workInfo.getState().name();
+                textStatus.append("\n"+status);
             }
         });
+    }
 
-        btnPeriodicTask.setOnClickListener(new View.OnClickListener() {
+    private void startPeriodicTask() {
+        textStatus.setText(getString(R.string.status));
+
+        Data data = new Data.Builder()
+                .putString(MyWorker.EXTRA_CITY, editCity.getText().toString())
+                .build();
+
+        Constraints constraints = new Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build();
+
+        periodicWorkRequest = new PeriodicWorkRequest.Builder(MyWorker.class, 15, TimeUnit.MINUTES)
+                .setInputData(data)
+                .setConstraints(constraints)
+                .build();
+
+        WorkManager.getInstance().enqueue(periodicWorkRequest);
+
+        WorkManager.getInstance().getWorkInfoByIdLiveData(periodicWorkRequest.getId()).observe(MainActivity.this, new Observer<WorkInfo>() {
             @Override
-            public void onClick(View view) {
-                textStatus.setText("Status :");
-
-                Data data = new Data.Builder()
-                        .putString(MyWorker.EXTRA_CITY, editCity.getText().toString())
-                        .build();
-
-                Constraints constraints = new Constraints.Builder()
-                        .setRequiredNetworkType(NetworkType.CONNECTED)
-                        .build();
-
-                periodicWorkRequest = new PeriodicWorkRequest.Builder(MyWorker.class, 15, TimeUnit.MINUTES)
-                        .setInputData(data)
-                        .setConstraints(constraints)
-                        .build();
-
-                WorkManager.getInstance().enqueue(periodicWorkRequest);
-
-                WorkManager.getInstance().getWorkInfoByIdLiveData(periodicWorkRequest.getId()).observe(MainActivity.this, new Observer<WorkInfo>() {
-                    @Override
-                    public void onChanged(WorkInfo workInfo) {
-                        String status = workInfo.getState().name();
-                        textStatus.append("\n"+status);
-                        btnCancelTask.setEnabled(false);
-                        if (workInfo.getState() == WorkInfo.State.ENQUEUED){
-                            btnCancelTask.setEnabled(true);
-                        }
-                    }
-                });
+            public void onChanged(WorkInfo workInfo) {
+                String status = workInfo.getState().name();
+                textStatus.append("\n"+status);
+                btnCancelTask.setEnabled(false);
+                if (workInfo.getState() == WorkInfo.State.ENQUEUED){
+                    btnCancelTask.setEnabled(true);
+                }
             }
         });
+    }
 
-        btnCancelTask.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                WorkManager.getInstance().cancelWorkById(periodicWorkRequest.getId());
-            }
-        });
-
-
+    private void cancelPeriodicTask() {
+        WorkManager.getInstance().cancelWorkById(periodicWorkRequest.getId());
     }
 }
