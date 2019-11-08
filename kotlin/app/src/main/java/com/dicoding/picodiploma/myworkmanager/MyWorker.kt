@@ -45,7 +45,7 @@ class MyWorker(context: Context, workerParams: WorkerParameters) : Worker(contex
             override fun onSuccess(statusCode: Int, headers: Array<Header?>?, responseBody: ByteArray) {
                 val result = String(responseBody)
                 Log.d(TAG, result)
-                resultStatus = try {
+                 try {
                     val responseObject = JSONObject(result)
 
                     /*
@@ -62,11 +62,11 @@ class MyWorker(context: Context, workerParams: WorkerParameters) : Worker(contex
                     val message = "$currentWeather, $description with $temprature celcius"
                     showNotification(title, message)
                     Log.d(TAG, "onSuccess: Selesai.....")
-                    Result.success()
+                     resultStatus = Result.success()
                 } catch (e: Exception) {
                     showNotification("Get Current Weather Not Success", e.message)
                     Log.d(TAG, "onSuccess: Gagal.....")
-                    Result.failure()
+                     resultStatus = Result.failure()
                 }
             }
 
